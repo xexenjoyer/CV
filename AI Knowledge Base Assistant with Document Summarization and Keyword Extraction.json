@@ -397,8 +397,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -18496,
-        4336
+        -18240,
+        3808
       ],
       "webhookId": "93e15b75-dfc7-4bfe-8051-891b8aad8bd1",
       "credentials": {
@@ -599,13 +599,7 @@
     },
     "Send Welcome Message": {
       "main": [
-        [
-          {
-            "node": "Workflow Configuration",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Check if PDF": {

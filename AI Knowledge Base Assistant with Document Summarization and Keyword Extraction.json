@@ -1,0 +1,665 @@
+{
+  "name": "AI Knowledge Base Assistant with Document Summarization and Keyword Extraction",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "id": "a117b980-7bd2-49fe-946e-875882cd9a2f",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -18912,
+        3936
+      ],
+      "webhookId": "56c1f078-b696-4a23-8436-7d85f976fb61",
+      "credentials": {
+        "telegramApi": {
+          "id": "adywhOV1x3QTTFBh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "supportedFormats",
+              "value": "PDF, DOCX, TXT, MD",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "e7640ee4-b70c-4750-9fa8-dbc4f90eb66b",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -18688,
+        3936
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document }}",
+              "operator": {
+                "type": "object",
+                "operation": "exists"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document.mime_type }}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "id-3",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document.mime_type }}",
+              "rightValue": "word",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "id-4",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document.mime_type }}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "5a33d215-71bf-4ecf-9113-0c4e4a07a9e8",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document.mime_type }}",
+              "rightValue": "markdown",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "c97459f9-5e6b-4f77-a911-842f473f9a47",
+      "name": "Check File Type",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -18240,
+        4032
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI assistant that analyzes documents for a knowledge base system.\n\nYour task is to:\n1. Read and understand the document content \n2. Create a brief summary of the key points (3-7 sentences)\n3. Extract 5-10 relevant keywords\n\nReturn your analysis in the structured JSON format defined by the output parser. Answer in Russian."
+        }
+      },
+      "id": "fa8047b1-9c43-4a2a-8aef-fad769f59f83",
+      "name": "AI Summarization and Keyword Extraction",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -17568,
+        4032
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"summary\": \"A brief summary of the document content\",\n\t\"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"]\n}"
+      },
+      "id": "c607833e-934c-4fa2-bba4-74101f2c5a29",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -17424,
+        4240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "uploader",
+              "value": "={{ $('Telegram Trigger').item.json.message.from.username || $('Telegram Trigger').item.json.message.from.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "file_name",
+              "value": "={{ $('Telegram Trigger').item.json.message.document.file_name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "summary",
+              "value": "={{ $json.output.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "keywords",
+              "value": "={{ $json.output.keywords.join(', ') }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "notes",
+              "value": "=Size: {{ ($('Telegram Trigger').item.json.message.document.file_size / 1024).toFixed(2) }} KB, Type: {{ $('Telegram Trigger').item.json.message.document.mime_type }}, Language: {{ $('Telegram Trigger').item.json.message.from.language_code }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aa68e679-91e0-4339-b435-8966ddd95758",
+      "name": "Prepare Google Sheets Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -17216,
+        4032
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1rmAFXG7t1g2rhVD9JHKCshro7yc8u_VOCFDYFoLHVH0/edit?usp=sharing",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1rmAFXG7t1g2rhVD9JHKCshro7yc8u_VOCFDYFoLHVH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "uploader",
+              "displayName": "uploader",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "file_name",
+              "displayName": "file_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "keywords",
+              "displayName": "keywords",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "fbd7fd5e-ea61-4fff-837c-674c02d9b59a",
+      "name": "Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -16992,
+        4032
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cMCHpMUtrhCnbztE",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=✅ Документ успешно обработан!\n\nФайл: {{ $('Telegram Trigger').item.json.message.document.file_name }}\n\nКраткое описание: {{ $('Prepare Google Sheets Data').item.json.summary }}\n\nКлючевые слова: {{ $('Prepare Google Sheets Data').item.json.keywords }}",
+        "additionalFields": {}
+      },
+      "id": "3faf03b6-40b9-479b-959f-0e1a69315260",
+      "name": "Send Confirmation to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -16768,
+        4032
+      ],
+      "webhookId": "f69b5736-ee0b-4353-b22e-a78fefd7427b",
+      "credentials": {
+        "telegramApi": {
+          "id": "adywhOV1x3QTTFBh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "❌ Sorry, this file format is not supported. Please send a PDF, DOCX or TXT, file.",
+        "additionalFields": {}
+      },
+      "id": "a7249653-eb85-42cd-84d0-4ed4bddc9f6a",
+      "name": "Send Error Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -18016,
+        4224
+      ],
+      "webhookId": "df85ada3-7d21-468a-9293-09df778519a8",
+      "credentials": {
+        "telegramApi": {
+          "id": "adywhOV1x3QTTFBh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=🔄 Началась обработка документа",
+        "additionalFields": {}
+      },
+      "id": "bb72e0e6-e801-4f31-ba37-2235acb86637",
+      "name": "Send Confirmation to Telegram1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -18016,
+        3840
+      ],
+      "webhookId": "f69b5736-ee0b-4353-b22e-a78fefd7427b",
+      "credentials": {
+        "telegramApi": {
+          "id": "adywhOV1x3QTTFBh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Workflow Configuration').item.json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "16bfcaea-48d5-4326-ba3d-fcda5cdbd544",
+      "name": "Check for /start Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -18464,
+        3936
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "👋 Привет! Я бот для анализа документов.\n📄 Отправьте мне документ (PDF, DOCX или TXT ), и я:\n✅ Создам краткое резюме содержания\n🔑 Извлеку ключевые слова\n💾 Сохраню результаты в Google Sheets\nПросто отправьте файл, и я начну обработку!",
+        "additionalFields": {}
+      },
+      "id": "65109b80-2995-441d-b63d-5f54df68c20e",
+      "name": "Send Welcome Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -18240,
+        3840
+      ],
+      "webhookId": "93e15b75-dfc7-4bfe-8051-891b8aad8bd1",
+      "credentials": {
+        "telegramApi": {
+          "id": "adywhOV1x3QTTFBh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document.mime_type }}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "382291e7-3e85-4d6f-bd9c-c614e14e458f",
+      "name": "Check if PDF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -18016,
+        4032
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "166b3f6e-d365-48e6-8193-5015fc04143d",
+      "name": "Extract PDF Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -17792,
+        3936
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "c0efdb1e-c7c4-4b1d-9861-b486dc051721",
+      "name": "Extract DOCX/TXT Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -17792,
+        4128
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -17568,
+        4240
+      ],
+      "id": "05206fc2-727f-40e2-94cd-b1cfc3ca4962",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "42Y2136BptmdhtUL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Check for /start Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check File Type": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation to Telegram1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check if PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Summarization and Keyword Extraction",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Google Sheets Data": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summarization and Keyword Extraction": {
+      "main": [
+        [
+          {
+            "node": "Prepare Google Sheets Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for /start Command": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check File Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if PDF": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract DOCX/TXT Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "AI Summarization and Keyword Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract DOCX/TXT Text": {
+      "main": [
+        [
+          {
+            "node": "AI Summarization and Keyword Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summarization and Keyword Extraction",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "77af7306-d3cb-464c-8026-a1aedfadc2bd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21a1e36229456668d85761148da09ed60f6596c12652168d255bafb5b3f34431"
+  },
+  "id": "g34EktJdtGHPsSxU",
+  "tags": []
+}

@@ -9,13 +9,13 @@
           "download": true
         }
       },
-      "id": "a117b980-7bd2-49fe-946e-875882cd9a2f",
+      "id": "8b663e94-0f75-4589-95d9-092bd1d8c85f",
       "name": "Telegram Trigger",
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -18912,
-        3936
+        -18496,
+        4256
       ],
       "webhookId": "56c1f078-b696-4a23-8436-7d85f976fb61",
       "credentials": {
@@ -40,13 +40,13 @@
         "includeOtherFields": true,
         "options": {}
       },
-      "id": "e7640ee4-b70c-4750-9fa8-dbc4f90eb66b",
+      "id": "882c54e2-c676-4de6-a8d4-4a33c0beb71b",
       "name": "Workflow Configuration",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -18688,
-        3936
+        -18272,
+        4256
       ]
     },
     {
@@ -109,13 +109,13 @@
         "looseTypeValidation": true,
         "options": {}
       },
-      "id": "c97459f9-5e6b-4f77-a911-842f473f9a47",
+      "id": "996fdc02-60db-4a79-af03-8a94e09add64",
       "name": "Check File Type",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -18240,
-        4032
+        -17824,
+        4352
       ]
     },
     {
@@ -127,26 +127,26 @@
           "systemMessage": "You are an AI assistant that analyzes documents for a knowledge base system.\n\nYour task is to:\n1. Read and understand the document content \n2. Create a brief summary of the key points (3-7 sentences)\n3. Extract 5-10 relevant keywords\n\nReturn your analysis in the structured JSON format defined by the output parser. Answer in Russian."
         }
       },
-      "id": "fa8047b1-9c43-4a2a-8aef-fad769f59f83",
+      "id": "bbcd423d-be82-4a0f-817c-52b744a84d5b",
       "name": "AI Summarization and Keyword Extraction",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3,
       "position": [
-        -17568,
-        4032
+        -16768,
+        4352
       ]
     },
     {
       "parameters": {
         "jsonSchemaExample": "{\n\t\"summary\": \"A brief summary of the document content\",\n\t\"keywords\": [\"keyword1\", \"keyword2\", \"keyword3\"]\n}"
       },
-      "id": "c607833e-934c-4fa2-bba4-74101f2c5a29",
+      "id": "498fe4af-04d7-49f8-a1b7-7441c8306583",
       "name": "Structured Output Parser",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -17424,
-        4240
+        -16624,
+        4560
       ]
     },
     {
@@ -193,13 +193,13 @@
         },
         "options": {}
       },
-      "id": "aa68e679-91e0-4339-b435-8966ddd95758",
+      "id": "ddebdb72-a709-4987-b78d-0be0f212c13a",
       "name": "Prepare Google Sheets Data",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -17216,
-        4032
+        -16416,
+        4352
       ]
     },
     {
@@ -272,13 +272,13 @@
         },
         "options": {}
       },
-      "id": "fbd7fd5e-ea61-4fff-837c-674c02d9b59a",
+      "id": "77738d8e-35de-4142-8672-1c2ec9dcf089",
       "name": "Save to Google Sheets",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -16992,
-        4032
+        -16192,
+        4352
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -293,13 +293,13 @@
         "text": "=✅ Документ успешно обработан!\n\nФайл: {{ $('Telegram Trigger').item.json.message.document.file_name }}\n\nКраткое описание: {{ $('Prepare Google Sheets Data').item.json.summary }}\n\nКлючевые слова: {{ $('Prepare Google Sheets Data').item.json.keywords }}",
         "additionalFields": {}
       },
-      "id": "3faf03b6-40b9-479b-959f-0e1a69315260",
+      "id": "58855bfc-016f-4175-83ad-def8f8dd531e",
       "name": "Send Confirmation to Telegram",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -16768,
-        4032
+        -15968,
+        4352
       ],
       "webhookId": "f69b5736-ee0b-4353-b22e-a78fefd7427b",
       "credentials": {
@@ -315,13 +315,13 @@
         "text": "❌ Sorry, this file format is not supported. Please send a PDF, DOCX or TXT, file.",
         "additionalFields": {}
       },
-      "id": "a7249653-eb85-42cd-84d0-4ed4bddc9f6a",
+      "id": "da620bd7-ac3b-4ed5-912d-539acdcb9a68",
       "name": "Send Error Message",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -18016,
-        4224
+        -17712,
+        4592
       ],
       "webhookId": "df85ada3-7d21-468a-9293-09df778519a8",
       "credentials": {
@@ -337,13 +337,13 @@
         "text": "=🔄 Началась обработка документа",
         "additionalFields": {}
       },
-      "id": "bb72e0e6-e801-4f31-ba37-2235acb86637",
+      "id": "9827fb21-ca9e-41c7-a20f-062492f8bbfd",
       "name": "Send Confirmation to Telegram1",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -18016,
-        3840
+        -17648,
+        4192
       ],
       "webhookId": "f69b5736-ee0b-4353-b22e-a78fefd7427b",
       "credentials": {
@@ -377,13 +377,13 @@
         },
         "options": {}
       },
-      "id": "16bfcaea-48d5-4326-ba3d-fcda5cdbd544",
+      "id": "5f4a06f3-11fe-4270-93cf-eb140d8bf1c7",
       "name": "Check for /start Command",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -18464,
-        3936
+        -18048,
+        4256
       ]
     },
     {
@@ -392,13 +392,13 @@
         "text": "👋 Привет! Я бот для анализа документов.\n📄 Отправьте мне документ (PDF, DOCX или TXT ), и я:\n✅ Создам краткое резюме содержания\n🔑 Извлеку ключевые слова\n💾 Сохраню результаты в Google Sheets\nПросто отправьте файл, и я начну обработку!",
         "additionalFields": {}
       },
-      "id": "65109b80-2995-441d-b63d-5f54df68c20e",
+      "id": "bdac503b-716e-453e-a74f-94f51d77edc4",
       "name": "Send Welcome Message",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -18240,
-        3808
+        -17792,
+        4016
       ],
       "webhookId": "93e15b75-dfc7-4bfe-8051-891b8aad8bd1",
       "credentials": {
@@ -432,13 +432,13 @@
         "looseTypeValidation": true,
         "options": {}
       },
-      "id": "382291e7-3e85-4d6f-bd9c-c614e14e458f",
+      "id": "d327b541-b443-4e19-a3c0-92363a07bfaf",
       "name": "Check if PDF",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -18016,
-        4032
+        -17648,
+        4368
       ]
     },
     {
@@ -446,13 +446,13 @@
         "operation": "pdf",
         "options": {}
       },
-      "id": "166b3f6e-d365-48e6-8193-5015fc04143d",
+      "id": "9a5a1b9a-3344-434a-bd83-d04a4b7c48f7",
       "name": "Extract PDF Text",
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        -17792,
-        3936
+        -17008,
+        4256
       ]
     },
     {
@@ -460,13 +460,13 @@
         "operation": "text",
         "options": {}
       },
-      "id": "c0efdb1e-c7c4-4b1d-9861-b486dc051721",
+      "id": "68a2d2c4-280e-4b04-a342-22076f6bdde9",
       "name": "Extract DOCX/TXT Text",
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.1,
       "position": [
-        -17792,
-        4128
+        -16960,
+        4576
       ]
     },
     {
@@ -476,15 +476,72 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -17568,
-        4240
+        -16768,
+        4560
       ],
-      "id": "05206fc2-727f-40e2-94cd-b1cfc3ca4962",
+      "id": "c5dac11e-ec9b-4d9e-975d-c07380f0280f",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
           "id": "42Y2136BptmdhtUL",
           "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.document.mime_type }}",
+              "rightValue": "word",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "189e5433-9a77-4e04-845c-f0d1a401649a",
+      "name": "Check if WORD",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -17488,
+        4480
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "extract",
+        "operation": "Extract Text From Word",
+        "endPageNumber": 1000,
+        "extractionOptions": {},
+        "advancedOptions": {}
+      },
+      "type": "n8n-nodes-pdf4me.PDF4me",
+      "typeVersion": 1,
+      "position": [
+        -17168,
+        4416
+      ],
+      "id": "6ccb3195-7a66-4556-92a0-e2eef4886a23",
+      "name": "Extract text from word",
+      "credentials": {
+        "pdf4meApi": {
+          "id": "6pC2fW9q7V5el8i3",
+          "name": "PDF4ME account"
         }
       }
     }
@@ -597,11 +654,6 @@
         ]
       ]
     },
-    "Send Welcome Message": {
-      "main": [
-        []
-      ]
-    },
     "Check if PDF": {
       "main": [
         [
@@ -613,7 +665,7 @@
         ],
         [
           {
-            "node": "Extract DOCX/TXT Text",
+            "node": "Check if WORD",
             "type": "main",
             "index": 0
           }
@@ -648,6 +700,35 @@
           {
             "node": "AI Summarization and Keyword Extraction",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if WORD": {
+      "main": [
+        [
+          {
+            "node": "Extract text from word",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract DOCX/TXT Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text from word": {
+      "main": [
+        [
+          {
+            "node": "AI Summarization and Keyword Extraction",
+            "type": "main",
             "index": 0
           }
         ]

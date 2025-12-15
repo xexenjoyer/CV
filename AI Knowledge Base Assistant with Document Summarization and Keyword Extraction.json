@@ -1,5 +1,4 @@
 {
-  "name": "AI Knowledge Base Assistant with Document Summarization and Keyword Extraction",
   "nodes": [
     {
       "parameters": {
@@ -398,8 +397,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -18240,
-        3840
+        -18496,
+        4336
       ],
       "webhookId": "93e15b75-dfc7-4bfe-8051-891b8aad8bd1",
       "credentials": {
@@ -490,7 +489,6 @@
       }
     }
   ],
-  "pinData": {},
   "connections": {
     "Telegram Trigger": {
       "main": [
@@ -537,6 +535,17 @@
         ]
       ]
     },
+    "AI Summarization and Keyword Extraction": {
+      "main": [
+        [
+          {
+            "node": "Prepare Google Sheets Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Structured Output Parser": {
       "ai_outputParser": [
         [
@@ -570,17 +579,6 @@
         ]
       ]
     },
-    "AI Summarization and Keyword Extraction": {
-      "main": [
-        [
-          {
-            "node": "Prepare Google Sheets Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Check for /start Command": {
       "main": [
         [
@@ -593,6 +591,17 @@
         [
           {
             "node": "Check File Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome Message": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
             "type": "main",
             "index": 0
           }
@@ -651,15 +660,9 @@
       ]
     }
   },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
-  },
-  "versionId": "77af7306-d3cb-464c-8026-a1aedfadc2bd",
+  "pinData": {},
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "21a1e36229456668d85761148da09ed60f6596c12652168d255bafb5b3f34431"
-  },
-  "id": "g34EktJdtGHPsSxU",
-  "tags": []
+  }
 }
